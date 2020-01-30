@@ -52,4 +52,21 @@ class BoardControllerTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
         ;
     }
+
+    @DisplayName("입력값이 Null 혹은 잘못된 입력값으로 인한 에러 발생")
+    @Test
+    public void createBoardBadRequestEmptyInput() throws Exception {
+        //given
+        RequestBoardDto requestBoardDto = RequestBoardDto.builder()
+                .build();
+
+        //when
+        mockMvc.perform(post("/api/board")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(requestBoardDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+        ;
+    }
 }

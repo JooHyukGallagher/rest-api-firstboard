@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
 
     @Transactional
     public ResponseBoardDto save(RequestBoardDto requestBoardDto) {

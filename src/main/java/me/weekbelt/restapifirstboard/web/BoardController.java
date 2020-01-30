@@ -30,14 +30,14 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<ResponseBoardDto> createBoard(@RequestBody @Valid RequestBoardDto requestBoardDto,
                                          Errors errors) {
+        if (errors.hasErrors()){
+            return ResponseEntity.badRequest().build();
+        }
 
         ResponseBoardDto savedBoard = boardService.save(requestBoardDto);
-
         WebMvcLinkBuilder selfLinkBuilder = linkTo(BoardController.class).slash(savedBoard.getId());
         URI createUri = selfLinkBuilder.toUri();
 
         return ResponseEntity.created(createUri).body(savedBoard);
     }
-
-
 }
