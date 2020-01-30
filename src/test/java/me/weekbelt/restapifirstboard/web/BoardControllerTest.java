@@ -50,6 +50,10 @@ class BoardControllerTest {
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("boardTitle").value("자유"))
+                .andExpect(jsonPath("boardContent").value("자유 입니다."))
+                .andExpect(jsonPath("boardType").value("FREE"))
+                .andExpect(jsonPath("viewCount").value("0"))
         ;
     }
 
