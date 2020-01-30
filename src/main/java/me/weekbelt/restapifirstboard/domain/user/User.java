@@ -12,7 +12,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Getter
 @NoArgsConstructor @AllArgsConstructor
 @Entity
@@ -38,6 +37,14 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Reply> replies = new ArrayList<>();
+
+    @Builder
+    public User(String name, String email, String picture, Role role) {
+        this.name = name;
+        this.email = email;
+        this.picture = picture;
+        this.role = role;
+    }
 
     public User update(String name, String picture) {
         this.name = name;
