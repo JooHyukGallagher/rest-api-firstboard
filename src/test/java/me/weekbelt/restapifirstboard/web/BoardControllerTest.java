@@ -53,7 +53,7 @@ class BoardControllerTest {
         ;
     }
 
-    @DisplayName("입력값이 Null 혹은 잘못된 입력값으로 인한 에러 발생")
+    @DisplayName("입력값이 비어있는 경우에 에러가 발생하는 테스트")
     @Test
     public void createBoardBadRequestEmptyInput() throws Exception {
         //given

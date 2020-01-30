@@ -28,10 +28,10 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping
-    public ResponseEntity<ResponseBoardDto> createBoard(@RequestBody @Valid RequestBoardDto requestBoardDto,
+    public ResponseEntity<?> createBoard(@RequestBody @Valid RequestBoardDto requestBoardDto,
                                          Errors errors) {
         if (errors.hasErrors()){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(errors);
         }
 
         ResponseBoardDto savedBoard = boardService.save(requestBoardDto);
