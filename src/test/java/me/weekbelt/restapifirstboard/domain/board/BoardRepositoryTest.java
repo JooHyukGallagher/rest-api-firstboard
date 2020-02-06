@@ -28,12 +28,14 @@ class BoardRepositoryTest {
         //given
         String boardTitle = "자유";
         String boardContent = "자유 입니다.";
+        String author = "김주혁";
         BoardType boardType = BoardType.FREE;
 
         Board board = Board.builder()
                 .boardTitle(boardTitle)
                 .boardContent(boardContent)
                 .boardType(boardType)
+                .author(author)
                 .build();
         boardRepository.save(board);
 
@@ -44,6 +46,7 @@ class BoardRepositoryTest {
         Board findBoard = boardList.get(0);
         assertThat(findBoard.getBoardTitle()).isEqualTo(boardTitle);
         assertThat(findBoard.getBoardContent()).isEqualTo(boardContent);
+        assertThat(findBoard.getAuthor()).isEqualTo(author);
         assertThat(findBoard.getBoardType()).isEqualTo(boardType);
     }
 }
