@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import me.weekbelt.restapifirstboard.domain.BaseTimeEntity;
 import me.weekbelt.restapifirstboard.web.dto.board.BoardSaveRequestDto;
 import me.weekbelt.restapifirstboard.web.dto.board.BoardSaveResponseDto;
+import me.weekbelt.restapifirstboard.web.dto.board.BoardUpdateRequestDto;
+import me.weekbelt.restapifirstboard.web.dto.board.BoardUpdateResponseDto;
 
 import javax.persistence.*;
 
@@ -50,7 +52,21 @@ public class Board extends BaseTimeEntity {
                 .build();
     }
 
+    public BoardUpdateResponseDto toBoardUpdateResponseDto(){
+        return BoardUpdateResponseDto.builder()
+                .boardTitle(this.boardTitle)
+                .boardContent(this.boardContent)
+                .boardType(this.boardType.name())
+                .build();
+    }
+
     public void plusViewCount(){
         this.viewCount++;
+    }
+
+    public void update(BoardUpdateRequestDto boardUpdateRequestDto) {
+        this.boardTitle = boardUpdateRequestDto.getBoardTitle();
+        this.boardContent = boardUpdateRequestDto.getBoardContent();
+        this.boardType = BoardType.valueOf(boardUpdateRequestDto.getBoardType());
     }
 }

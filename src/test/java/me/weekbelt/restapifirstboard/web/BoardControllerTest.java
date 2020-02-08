@@ -5,36 +5,45 @@ import me.weekbelt.restapifirstboard.domain.board.Board;
 import me.weekbelt.restapifirstboard.domain.board.BoardRepository;
 import me.weekbelt.restapifirstboard.domain.board.BoardType;
 import me.weekbelt.restapifirstboard.web.dto.board.BoardSaveRequestDto;
+import me.weekbelt.restapifirstboard.web.dto.board.BoardUpdateRequestDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
+
+import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class BoardControllerTest extends BaseControllerTest {
     @Autowired
     BoardController boardController;
-
     @Autowired
     BoardRepository boardRepository;
+    @Autowired
+    EntityManager entityManager;
 
     @Override
     protected Object controller() {
         return boardController;
     }
 
+    @BeforeEach
+    public void initBoard(){
+        boardRepository.deleteAll();
+    }
+
     @DisplayName("게시글 생성")
     @Test
-    public void createEvent() throws Exception {
+    public void createBoard() throws Exception {
         //given
         String boardTitle = "자유";
         String boardContent = "자유입니다.";
@@ -54,7 +63,9 @@ class BoardControllerTest extends BaseControllerTest {
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(boardSaveRequestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").exists()).andReturn();
+                .andExpect(jsonPath("id").exists())
+                .andExpect(header().exists(HttpHeaders.LOCATION))
+        ;
 
         //then
         Board findBoard = boardRepository.findAll().get(0);
@@ -62,5 +73,110 @@ class BoardControllerTest extends BaseControllerTest {
         assertThat(findBoard.getBoardContent()).isEqualTo(boardContent);
         assertThat(findBoard.getAuthor()).isEqualTo(author);
         assertThat(findBoard.getBoardType()).isEqualTo(boardType);
+    }
+
+    @DisplayName("게시글 생성시 NULL값을 입력했을때 에러 발생")
+    @Test
+    public void createBoard_Bad_Request_Empty_Input() throws Exception {
+        //given
+        BoardSaveRequestDto boardSaveRequestDto = new BoardSaveRequestDto();
+
+        //when
+        mockMvc.perform(post("/api/board")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(boardSaveRequestDto)))
+                .andExpect(status().isBadRequest())
+        ;
+    }
+
+    @DisplayName("게시글 생성시 잘못된 값을 입력했을때 에러 발생")
+    @Test
+    public void createBoard_Bad_Request_Wrong_Input() throws Exception {
+        //given
+        BoardSaveRequestDto boardSaveRequestDto = BoardSaveRequestDto.builder()
+                .boardTitle("")
+                .boardContent("")
+                .boardType("")
+                .author("")
+                .build();
+
+        //when
+        mockMvc.perform(post("/api/board")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(boardSaveRequestDto)))
+                .andExpect(status().isBadRequest())
+        ;
+    }
+
+    @DisplayName("게시글 수정")
+    @Test
+    public void modifyBoard() throws Exception {
+        //given
+        Board board = generateBoard();
+
+        String boardTitle = "공지";
+        String boardContent = "공지 입니다.";
+        BoardType boardType = BoardType.NOTICE;
+
+        BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
+                .boardTitle(boardTitle)
+                .boardContent(boardContent)
+                .boardType(boardType.name())
+                .build();
+
+        //when
+        mockMvc.perform(put("/api/board/" + board.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(boardUpdateRequestDto)))
+                .andExpect(status().isOk());
+
+        //then
+        Board findBoard = boardRepository.findAll().get(0);
+        assertThat(findBoard.getBoardTitle()).isEqualTo(boardTitle);
+        assertThat(findBoard.getBoardContent()).isEqualTo(boardContent);
+        assertThat(findBoard.getBoardType()).isEqualTo(boardType);
+    }
+
+    @DisplayName("잘못된 값으로 게시글 수정")
+    @ParameterizedTest(name = "{index} {displayName}")
+    @CsvSource({
+            " , , ,", ",,,"
+    })
+    public void modifyBoard_Bad_Request_Wrong(String boardTitle,
+                                              String boardContent,
+                                              String boardType) throws Exception {
+        //given
+        Board board = generateBoard();
+
+        BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
+                .boardTitle(boardTitle)
+                .boardContent(boardContent)
+                .boardType(boardType)
+                .build();
+
+        //when
+        mockMvc.perform(put("/api/board/" + board.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(boardUpdateRequestDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    public Board generateBoard() {
+        String boardTitle = "자유";
+        String boardContent = "자유입니다.";
+        BoardType boardType = BoardType.FREE;
+        String author = "김주혁";
+
+        Board board = Board.builder()
+                .boardTitle(boardTitle)
+                .boardContent(boardContent)
+                .author(author)
+                .boardType(boardType)
+                .build();
+
+        return this.boardRepository.save(board);
     }
 }

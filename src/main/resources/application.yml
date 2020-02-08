@@ -1,7 +1,7 @@
 spring:
-#  jackson:
-#    deserialization:
-#        fail-on-unknown-properties: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
 
   datasource:
     username: sa
