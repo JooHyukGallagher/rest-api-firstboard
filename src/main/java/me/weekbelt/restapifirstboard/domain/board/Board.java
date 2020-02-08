@@ -39,35 +39,6 @@ public class Board extends BaseTimeEntity {
     }
 
     // == 비즈니스 로직 == //
-    public BoardSaveResponseDto toBoardSaveResponseDto(){
-        return BoardSaveResponseDto.builder()
-                .id(this.id)
-                .boardTitle(this.boardTitle)
-                .boardContent(this.boardContent)
-                .author(this.author)
-                .boardType(this.boardType)
-                .build();
-    }
-
-    public BoardUpdateResponseDto toBoardUpdateResponseDto(){
-        return BoardUpdateResponseDto.builder()
-                .boardTitle(this.boardTitle)
-                .boardContent(this.boardContent)
-                .boardType(this.boardType)
-                .build();
-    }
-
-    public BoardReadResponseDto toBoardReadResponseDto() {
-        return BoardReadResponseDto.builder()
-                .id(this.id)
-                .boardTitle(this.boardTitle)
-                .boardContent(this.boardContent)
-                .author(this.author)
-                .viewCount(this.viewCount)
-                .boardType(this.boardType)
-                .build();
-    }
-
     public void plusViewCount(){
         this.viewCount++;
     }

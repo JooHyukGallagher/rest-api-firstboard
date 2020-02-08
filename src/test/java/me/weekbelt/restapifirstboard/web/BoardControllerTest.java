@@ -19,9 +19,7 @@ import org.springframework.http.MediaType;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -170,12 +168,23 @@ class BoardControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("id").value(board.getId()))
                 .andExpect(jsonPath("boardTitle").value(board.getBoardTitle()))
                 .andExpect(jsonPath("boardContent").value(board.getBoardContent()))
-                .andExpect(jsonPath("viewCount").value(board.getViewCount()+1))
+                .andExpect(jsonPath("viewCount").value(board.getViewCount() + 1))
                 .andExpect(jsonPath("author").value(board.getAuthor()))
                 .andExpect(jsonPath("boardType").value(board.getBoardType().name()))
         ;
     }
 
+//    @DisplayName("게시글 삭제")
+//    @Test
+//    public void deleteBoard() throws Exception {
+//        //given
+//        Board board = generateBoard();
+//
+//        //when
+//        mockMvc.perform(delete("/api/board/" + board.getId()))
+//        ;
+//        //then
+//    }
 
     public Board generateBoard() {
         String boardTitle = "자유";

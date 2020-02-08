@@ -3,7 +3,6 @@ package me.weekbelt.restapifirstboard.web;
 import lombok.RequiredArgsConstructor;
 import me.weekbelt.restapifirstboard.service.BoardService;
 import me.weekbelt.restapifirstboard.web.dto.board.*;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -50,4 +49,6 @@ public class BoardController {
         BoardReadResponseDto boardReadResponseDto = boardService.readBoard(boardId);
         return ResponseEntity.ok(boardReadResponseDto);
     }
+
+
 }

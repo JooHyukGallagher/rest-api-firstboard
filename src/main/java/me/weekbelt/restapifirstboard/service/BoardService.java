@@ -2,6 +2,7 @@ package me.weekbelt.restapifirstboard.service;
 
 import lombok.RequiredArgsConstructor;
 import me.weekbelt.restapifirstboard.domain.board.Board;
+import me.weekbelt.restapifirstboard.domain.board.BoardFactoryObject;
 import me.weekbelt.restapifirstboard.domain.board.BoardRepository;
 import me.weekbelt.restapifirstboard.web.dto.board.*;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,8 @@ public class BoardService {
     @Transactional
     public BoardSaveResponseDto saveBoard(BoardSaveRequestDto boardSaveRequestDto){
         Board savedBoard = boardRepository.save(boardSaveRequestDto.toBoardEntity());
-        return savedBoard.toBoardSaveResponseDto();
+
+        return BoardFactoryObject.toBoardSaveResponseDto(savedBoard);
     }
 
     @Transactional
@@ -31,7 +33,7 @@ public class BoardService {
         Board updatedBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 사용자가 존재하지 않습니다. id=" + boardId));
 
-        return updatedBoard.toBoardUpdateResponseDto();
+        return BoardFactoryObject.toBoardUpdateResponseDto(updatedBoard);
     }
 
     public BoardReadResponseDto readBoard(Long boardId){
@@ -40,6 +42,6 @@ public class BoardService {
 
         findBoard.plusViewCount();
 
-        return findBoard.toBoardReadResponseDto();
+        return BoardFactoryObject.toBoardReadResponseDto(findBoard);
     }
 }
