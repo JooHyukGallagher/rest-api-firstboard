@@ -1,6 +1,7 @@
 package me.weekbelt.restapifirstboard.domain;
 
 import lombok.Getter;
+import me.weekbelt.restapifirstboard.web.dto.board.BoardReadResponseDto;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,4 +20,5 @@ public abstract class BaseTimeEntity {
 
     @LastModifiedDate
     private LocalDateTime modifyDate;
+
 }

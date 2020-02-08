@@ -20,7 +20,9 @@ import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class BoardControllerTest extends BaseControllerTest {
@@ -37,7 +39,7 @@ class BoardControllerTest extends BaseControllerTest {
     }
 
     @BeforeEach
-    public void initBoard(){
+    public void initBoard() {
         boardRepository.deleteAll();
     }
 
@@ -75,29 +77,21 @@ class BoardControllerTest extends BaseControllerTest {
         assertThat(findBoard.getBoardType()).isEqualTo(boardType);
     }
 
-    @DisplayName("게시글 생성시 NULL값을 입력했을때 에러 발생")
-    @Test
-    public void createBoard_Bad_Request_Empty_Input() throws Exception {
-        //given
-        BoardSaveRequestDto boardSaveRequestDto = new BoardSaveRequestDto();
-
-        //when
-        mockMvc.perform(post("/api/board")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(boardSaveRequestDto)))
-                .andExpect(status().isBadRequest())
-        ;
-    }
-
     @DisplayName("게시글 생성시 잘못된 값을 입력했을때 에러 발생")
-    @Test
-    public void createBoard_Bad_Request_Wrong_Input() throws Exception {
+    @ParameterizedTest(name = "{index} {displayName}")
+    @CsvSource({
+            ",,,,", " , , , ,"
+    })
+    public void createBoard_Bad_Request_Empty_Wrong(String boardTitle,
+                                                    String boardContent,
+                                                    String author,
+                                                    String boardType) throws Exception {
         //given
         BoardSaveRequestDto boardSaveRequestDto = BoardSaveRequestDto.builder()
-                .boardTitle("")
-                .boardContent("")
-                .boardType("")
-                .author("")
+                .boardTitle(boardTitle)
+                .boardContent(boardContent)
+                .author(author)
+                .boardType(boardType)
                 .build();
 
         //when
@@ -163,6 +157,25 @@ class BoardControllerTest extends BaseControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("boardId에 따른 게시글 조회")
+    @Test
+    public void readBoard() throws Exception {
+        //given
+        Board board = generateBoard();
+
+        //when
+        mockMvc.perform(get("/api/board/" + board.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(board.getId()))
+                .andExpect(jsonPath("boardTitle").value(board.getBoardTitle()))
+                .andExpect(jsonPath("boardContent").value(board.getBoardContent()))
+                .andExpect(jsonPath("viewCount").value(board.getViewCount()+1))
+                .andExpect(jsonPath("author").value(board.getAuthor()))
+                .andExpect(jsonPath("boardType").value(board.getBoardType().name()))
+        ;
+    }
+
 
     public Board generateBoard() {
         String boardTitle = "자유";
@@ -175,6 +188,7 @@ class BoardControllerTest extends BaseControllerTest {
                 .boardContent(boardContent)
                 .author(author)
                 .boardType(boardType)
+                .viewCount(0)
                 .build();
 
         return this.boardRepository.save(board);

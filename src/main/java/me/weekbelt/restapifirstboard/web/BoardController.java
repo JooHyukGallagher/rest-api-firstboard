@@ -2,10 +2,7 @@ package me.weekbelt.restapifirstboard.web;
 
 import lombok.RequiredArgsConstructor;
 import me.weekbelt.restapifirstboard.service.BoardService;
-import me.weekbelt.restapifirstboard.web.dto.board.BoardSaveRequestDto;
-import me.weekbelt.restapifirstboard.web.dto.board.BoardSaveResponseDto;
-import me.weekbelt.restapifirstboard.web.dto.board.BoardUpdateRequestDto;
-import me.weekbelt.restapifirstboard.web.dto.board.BoardUpdateResponseDto;
+import me.weekbelt.restapifirstboard.web.dto.board.*;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -48,8 +45,9 @@ public class BoardController {
         return ResponseEntity.ok(boardUpdateResponseDto);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> readBoard(@PathVariable(name = "id") Long boardId){
-//
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> readBoard(@PathVariable(name = "id") Long boardId){
+        BoardReadResponseDto boardReadResponseDto = boardService.readBoard(boardId);
+        return ResponseEntity.ok(boardReadResponseDto);
+    }
 }
