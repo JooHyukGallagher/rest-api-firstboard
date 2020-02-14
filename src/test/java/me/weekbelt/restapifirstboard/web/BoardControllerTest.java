@@ -31,11 +31,6 @@ class BoardControllerTest extends BaseControllerTest {
     @Autowired
     EntityManager entityManager;
 
-    @Override
-    protected Object controller() {
-        return boardController;
-    }
-
     @BeforeEach
     public void initBoard() {
         boardRepository.deleteAll();
@@ -62,9 +57,13 @@ class BoardControllerTest extends BaseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(boardSaveRequestDto)))
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.query-board").exists())
+                .andExpect(jsonPath("_links.update-board").exists())
         ;
 
         //then
@@ -96,7 +95,11 @@ class BoardControllerTest extends BaseControllerTest {
         mockMvc.perform(post("/api/board")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(boardSaveRequestDto)))
+                .andDo(print())
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
         ;
     }
 
@@ -173,18 +176,6 @@ class BoardControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("boardType").value(board.getBoardType().name()))
         ;
     }
-
-//    @DisplayName("게시글 삭제")
-//    @Test
-//    public void deleteBoard() throws Exception {
-//        //given
-//        Board board = generateBoard();
-//
-//        //when
-//        mockMvc.perform(delete("/api/board/" + board.getId()))
-//        ;
-//        //then
-//    }
 
     public Board generateBoard() {
         String boardTitle = "자유";

@@ -8,7 +8,6 @@ import me.weekbelt.restapifirstboard.domain.board.Board;
 import me.weekbelt.restapifirstboard.domain.board.BoardType;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,9 +15,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class BoardSaveRequestDto {
 
-    @NotBlank
+    @NotBlank(message = "제목을 입하세요.")
     private String boardTitle;
-    @NotBlank
+    @NotBlank(message = "내용을 입력하세요.")
     private String boardContent;
     @NotBlank
     private String author;

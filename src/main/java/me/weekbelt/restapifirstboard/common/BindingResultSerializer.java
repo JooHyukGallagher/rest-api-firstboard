@@ -11,14 +11,14 @@ import java.io.IOException;
 @JsonComponent
 public class BindingResultSerializer extends JsonSerializer<BindingResult> {
     @Override
-    public void serialize(BindingResult value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(BindingResult result, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartArray();
-        value.getGlobalErrors().forEach(e -> {
+        result.getGlobalErrors().forEach(r -> {
             try {
                 gen.writeStartObject();
-                gen.writeStringField("objectName", e.getObjectName());
-                gen.writeStringField("code", e.getCode());
-                gen.writeStringField("defaultMessage", e.getDefaultMessage());
+                gen.writeStringField("objectName", r.getObjectName());
+                gen.writeStringField("code", r.getCode());
+                gen.writeStringField("defaultMessage", r.getDefaultMessage());
                 gen.writeEndObject();
             } catch (IOException ex) {
                 ex.printStackTrace();
