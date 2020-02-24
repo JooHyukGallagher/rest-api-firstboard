@@ -19,6 +19,11 @@ import org.springframework.http.MediaType;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -53,7 +58,7 @@ class BoardControllerTest extends BaseControllerTest {
                 .build();
 
         //when
-        mockMvc.perform(post("/api/board")
+        mockMvc.perform(post("/api/boards")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(boardSaveRequestDto)))
@@ -62,8 +67,40 @@ class BoardControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
                 .andExpect(jsonPath("_links.self").exists())
-                .andExpect(jsonPath("_links.query-board").exists())
+                .andExpect(jsonPath("_links.query-boards").exists())
                 .andExpect(jsonPath("_links.update-board").exists())
+                .andDo(document("create-board",
+                        links(
+                                linkWithRel("self").description("현재 링크 표시"),
+                                linkWithRel("query-boards").description(""),
+                                linkWithRel("update-board").description("현재 게시글을 수정하는 링크")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-Type 헤더"),
+                                headerWithName(HttpHeaders.ACCEPT).description("Accept 헤더"),
+                                headerWithName(HttpHeaders.CONTENT_LENGTH).description("Content-Length 헤더")
+                        ),
+                        requestFields(
+                                fieldWithPath("boardTitle").description("게시글 제목"),
+                                fieldWithPath("boardContent").description("게시글 내용"),
+                                fieldWithPath("author").description("게시글 작성자 이름"),
+                                fieldWithPath("boardType").description("게시글의 카테고리 분류")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.LOCATION).description("Location 헤더"),
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-Type 헤더")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("게시글의 식별자"),
+                                fieldWithPath("boardTitle").description("게시글 제목"),
+                                fieldWithPath("boardContent").description("게시글 내용"),
+                                fieldWithPath("author").description("게시글 작성자 이름"),
+                                fieldWithPath("boardType").description("게시글의 카테고리 분류"),
+                                fieldWithPath("_links.self.href").description("현재 리소스 링크"),
+                                fieldWithPath("_links.query-boards.href").description(""),
+                                fieldWithPath("_links.update-board.href").description("현재 게시글의 수정 링크")
+                        )
+                ))
         ;
 
         //then
@@ -92,14 +129,14 @@ class BoardControllerTest extends BaseControllerTest {
                 .build();
 
         //when
-        mockMvc.perform(post("/api/board")
+        mockMvc.perform(post("/api/boards")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(boardSaveRequestDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].objectName").exists())
-                .andExpect(jsonPath("$[0].defaultMessage").exists())
-                .andExpect(jsonPath("$[0].code").exists())
+                .andExpect(jsonPath("content[0].objectName").exists())
+                .andExpect(jsonPath("content[0].defaultMessage").exists())
+                .andExpect(jsonPath("content[0].code").exists())
         ;
     }
 
@@ -120,7 +157,7 @@ class BoardControllerTest extends BaseControllerTest {
                 .build();
 
         //when
-        mockMvc.perform(put("/api/board/" + board.getId())
+        mockMvc.perform(put("/api/boards/" + board.getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(boardUpdateRequestDto)))
@@ -151,7 +188,7 @@ class BoardControllerTest extends BaseControllerTest {
                 .build();
 
         //when
-        mockMvc.perform(put("/api/board/" + board.getId())
+        mockMvc.perform(put("/api/boards/" + board.getId())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(boardUpdateRequestDto)))
@@ -165,7 +202,7 @@ class BoardControllerTest extends BaseControllerTest {
         Board board = generateBoard();
 
         //when
-        mockMvc.perform(get("/api/board/" + board.getId()))
+        mockMvc.perform(get("/api/boards/" + board.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(board.getId()))

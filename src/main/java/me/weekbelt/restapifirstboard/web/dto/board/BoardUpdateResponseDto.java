@@ -11,6 +11,7 @@ import me.weekbelt.restapifirstboard.domain.board.BoardType;
 @Builder
 @Getter
 public class BoardUpdateResponseDto {
+    private Long id;
     private String boardTitle;
     private String boardContent;
     private BoardType boardType;

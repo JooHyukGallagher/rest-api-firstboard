@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.weekbelt.restapifirstboard.domain.board.BoardType;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor @NoArgsConstructor
 @Builder @Getter
 public class BoardReadResponseDto {
@@ -17,4 +19,5 @@ public class BoardReadResponseDto {
     private String author;
     private Integer viewCount;
     private BoardType boardType;
+
 }

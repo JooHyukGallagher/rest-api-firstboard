@@ -1,3 +1,23 @@
+//// 프로젝트의 플러그인 의존성 관리를 위한 설정
+//buildscript {
+//    ext {
+//        springBootVersion = '2.2.4.RELEASE'
+//    }
+//    repositories {
+//        mavenCentral()
+//        jcenter()
+//    }
+//    dependencies {
+//        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+//    }
+//}
+//
+//// 선언한 플러그인 의존성들을 적용할 것인지를 결정
+//apply plugin: 'java'
+//apply plugin: 'eclipse'
+//apply plugin: 'org.springframework.boot'
+//apply plugin: 'io.spring.dependency-management'
+
 plugins {
     id 'org.springframework.boot' version '2.2.4.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
@@ -21,6 +41,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 ext {
@@ -45,6 +66,7 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:{project-version}'
 }
 
 test {
@@ -55,4 +77,11 @@ test {
 asciidoctor {
     inputs.dir snippetsDir
     dependsOn test
+}
+
+bootJar {
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}/html5") {
+        into 'static/docs'
+    }
 }

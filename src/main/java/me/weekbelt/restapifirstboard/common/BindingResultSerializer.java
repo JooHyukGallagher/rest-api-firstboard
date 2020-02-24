@@ -13,7 +13,7 @@ public class BindingResultSerializer extends JsonSerializer<BindingResult> {
     @Override
     public void serialize(BindingResult result, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartArray();
-        result.getGlobalErrors().forEach(r -> {
+        result.getFieldErrors().forEach(r -> {
             try {
                 gen.writeStartObject();
                 gen.writeStringField("objectName", r.getObjectName());

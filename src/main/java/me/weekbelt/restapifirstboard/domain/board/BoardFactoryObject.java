@@ -17,6 +17,7 @@ public class BoardFactoryObject {
 
     public static BoardUpdateResponseDto toBoardUpdateResponseDto(Board board){
         return BoardUpdateResponseDto.builder()
+                .id(board.getId())
                 .boardTitle(board.getBoardTitle())
                 .boardContent(board.getBoardContent())
                 .boardType(board.getBoardType())
