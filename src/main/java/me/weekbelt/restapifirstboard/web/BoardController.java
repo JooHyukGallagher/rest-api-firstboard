@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import me.weekbelt.restapifirstboard.common.ErrorResource;
 import me.weekbelt.restapifirstboard.service.BoardService;
 import me.weekbelt.restapifirstboard.web.dto.board.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -61,12 +63,14 @@ public class BoardController {
 
         return ResponseEntity.ok(boardReadResource);
     }
-//
-//    @GetMapping
-//    public ResponseEntity<?> getBoards(@PageableDefault Pageable pageable,
-//                                       PagedResourcesAssembler<> assembler) {
-//
-//    }
+
+    @GetMapping
+    public ResponseEntity<?> getBoards(@PageableDefault Pageable pageable,
+                                       PagedResourcesAssembler<BoardReadResponseDto> assembler) {
+        Page<BoardReadResponseDto> page = boardService.findBoardList(pageable);
+        PagedModel<BoardReadResource> boardReadResources = assembler.toModel(page, b -> new BoardReadResource(b));
+        return ResponseEntity.ok(boardReadResources);
+    }
 
     private ResponseEntity<?> badRequest(BindingResult bindingResult) {
         return ResponseEntity.badRequest().body(new ErrorResource(bindingResult));

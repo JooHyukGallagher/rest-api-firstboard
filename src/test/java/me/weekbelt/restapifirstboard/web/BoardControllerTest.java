@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 
 import javax.persistence.EntityManager;
 
+import java.util.stream.IntStream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -144,7 +146,8 @@ class BoardControllerTest extends BaseControllerTest {
     @Test
     public void modifyBoard() throws Exception {
         //given
-        Board board = generateBoard();
+        Board board = generateBoard("자유", "자유입니다.",
+                BoardType.FREE, "김주혁");
 
         String boardTitle = "공지";
         String boardContent = "공지 입니다.";
@@ -179,7 +182,8 @@ class BoardControllerTest extends BaseControllerTest {
                                               String boardContent,
                                               String boardType) throws Exception {
         //given
-        Board board = generateBoard();
+        Board board = generateBoard("자유", "자유입니다.",
+                BoardType.FREE, "김주혁");
 
         BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
                 .boardTitle(boardTitle)
@@ -195,11 +199,43 @@ class BoardControllerTest extends BaseControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("게시글 리스트 조회")
+    @Test
+    public void queryBoards() throws Exception {
+        //given
+        IntStream.range(0, 10).forEach(number -> {
+            generateBoard("자유 " + number, "자유 입니다.",
+                    BoardType.FREE, "김주혁");
+        });
+        IntStream.range(0, 10).forEach(number -> {
+            generateBoard("공지 " + number, "공지 입니다.",
+                    BoardType.NOTICE, "김주혁");
+        });
+        IntStream.range(0, 10).forEach(number -> {
+            generateBoard("홍보 " + number, "홍보 입니다.",
+                    BoardType.PROMOTION, "김주혁");
+        });
+
+        //when
+        this.mockMvc.perform(get("/api/boards")
+                .param("page", "1")
+                .param("size", "10")
+                .param("sort", "id,DESC"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page").exists())
+                .andExpect(jsonPath("_embedded.boardReadResponseDtoList[0]._links.self").exists())
+                .andExpect(jsonPath("_links.self").exists())
+        ;
+        //then
+    }
+
     @DisplayName("boardId에 따른 게시글 조회")
     @Test
     public void readBoard() throws Exception {
         //given
-        Board board = generateBoard();
+        Board board = generateBoard("자유", "자유입니다.",
+                BoardType.FREE, "김주혁");
 
         //when
         mockMvc.perform(get("/api/boards/" + board.getId()))
@@ -214,12 +250,8 @@ class BoardControllerTest extends BaseControllerTest {
         ;
     }
 
-    public Board generateBoard() {
-        String boardTitle = "자유";
-        String boardContent = "자유입니다.";
-        BoardType boardType = BoardType.FREE;
-        String author = "김주혁";
-
+    private Board generateBoard(String boardTitle, String boardContent,
+                                BoardType boardType, String author) {
         Board board = Board.builder()
                 .boardTitle(boardTitle)
                 .boardContent(boardContent)
@@ -230,4 +262,5 @@ class BoardControllerTest extends BaseControllerTest {
 
         return this.boardRepository.save(board);
     }
+
 }
