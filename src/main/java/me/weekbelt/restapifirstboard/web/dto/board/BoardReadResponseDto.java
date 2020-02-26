@@ -20,4 +20,7 @@ public class BoardReadResponseDto {
     private Integer viewCount;
     private BoardType boardType;
 
+    private LocalDateTime createDate;
+    private LocalDateTime modifyDate;
+
 }
