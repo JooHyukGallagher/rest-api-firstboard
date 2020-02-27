@@ -10,7 +10,7 @@ public class BoardFactoryObject {
                 .id(board.getId())
                 .boardTitle(board.getBoardTitle())
                 .boardContent(board.getBoardContent())
-                .author(board.getAuthor())
+                .name(board.getUser().getName())
                 .boardType(board.getBoardType())
                 .build();
     }
@@ -29,7 +29,7 @@ public class BoardFactoryObject {
                 .id(board.getId())
                 .boardTitle(board.getBoardTitle())
                 .boardContent(board.getBoardContent())
-                .author(board.getAuthor())
+                .name(board.getUser().getName())
                 .viewCount(board.getViewCount())
                 .boardType(board.getBoardType())
                 .createDate(board.getCreateDate())

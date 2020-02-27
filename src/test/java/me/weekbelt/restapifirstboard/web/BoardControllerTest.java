@@ -1,9 +1,13 @@
 package me.weekbelt.restapifirstboard.web;
 
 import me.weekbelt.restapifirstboard.BaseControllerTest;
+import me.weekbelt.restapifirstboard.config.auth.dto.SessionUser;
 import me.weekbelt.restapifirstboard.domain.board.Board;
 import me.weekbelt.restapifirstboard.domain.board.BoardRepository;
 import me.weekbelt.restapifirstboard.domain.board.BoardType;
+import me.weekbelt.restapifirstboard.domain.user.User;
+import me.weekbelt.restapifirstboard.domain.user.UserRepository;
+import me.weekbelt.restapifirstboard.domain.user.UserType;
 import me.weekbelt.restapifirstboard.web.dto.board.BoardSaveRequestDto;
 import me.weekbelt.restapifirstboard.web.dto.board.BoardUpdateRequestDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpSession;
 
 import java.util.stream.IntStream;
 
@@ -36,11 +42,15 @@ class BoardControllerTest extends BaseControllerTest {
     @Autowired
     BoardRepository boardRepository;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     EntityManager entityManager;
+
 
     @BeforeEach
     public void initBoard() {
         boardRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @DisplayName("게시글 생성")
@@ -50,14 +60,15 @@ class BoardControllerTest extends BaseControllerTest {
         String boardTitle = "자유";
         String boardContent = "자유입니다.";
         BoardType boardType = BoardType.FREE;
-        String author = "김주혁";
 
         BoardSaveRequestDto boardSaveRequestDto = BoardSaveRequestDto.builder()
                 .boardTitle(boardTitle)
                 .boardContent(boardContent)
                 .boardType(boardType.name())
-                .author(author)
                 .build();
+
+        User user = generateUser();
+        SessionUser sessionUser = new SessionUser(user);
 
         //when
         mockMvc.perform(post("/api/boards")
@@ -109,24 +120,21 @@ class BoardControllerTest extends BaseControllerTest {
         Board findBoard = boardRepository.findAll().get(0);
         assertThat(findBoard.getBoardTitle()).isEqualTo(boardTitle);
         assertThat(findBoard.getBoardContent()).isEqualTo(boardContent);
-        assertThat(findBoard.getAuthor()).isEqualTo(author);
         assertThat(findBoard.getBoardType()).isEqualTo(boardType);
     }
 
     @DisplayName("게시글 생성시 잘못된 값을 입력했을때 에러 발생")
     @ParameterizedTest(name = "{index} {displayName}")
     @CsvSource({
-            ",,,,", " , , , ,"
+            ",,,", " , , ,"
     })
     public void createBoard_Bad_Request_Empty_Wrong(String boardTitle,
                                                     String boardContent,
-                                                    String author,
                                                     String boardType) throws Exception {
         //given
         BoardSaveRequestDto boardSaveRequestDto = BoardSaveRequestDto.builder()
                 .boardTitle(boardTitle)
                 .boardContent(boardContent)
-                .author(author)
                 .boardType(boardType)
                 .build();
 
@@ -146,8 +154,9 @@ class BoardControllerTest extends BaseControllerTest {
     @Test
     public void modifyBoard() throws Exception {
         //given
+        User user = generateUser();
         Board board = generateBoard("자유", "자유입니다.",
-                BoardType.FREE, "김주혁");
+                BoardType.FREE, user);
 
         String boardTitle = "공지";
         String boardContent = "공지 입니다.";
@@ -182,8 +191,9 @@ class BoardControllerTest extends BaseControllerTest {
                                               String boardContent,
                                               String boardType) throws Exception {
         //given
+        User user = generateUser();
         Board board = generateBoard("자유", "자유입니다.",
-                BoardType.FREE, "김주혁");
+                BoardType.FREE, user);
 
         BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
                 .boardTitle(boardTitle)
@@ -203,17 +213,18 @@ class BoardControllerTest extends BaseControllerTest {
     @Test
     public void queryBoards() throws Exception {
         //given
+        User user = generateUser();
         IntStream.range(0, 10).forEach(number -> {
             generateBoard("자유 " + number, "자유 입니다.",
-                    BoardType.FREE, "김주혁");
+                    BoardType.FREE, user);
         });
         IntStream.range(0, 10).forEach(number -> {
             generateBoard("공지 " + number, "공지 입니다.",
-                    BoardType.NOTICE, "김주혁");
+                    BoardType.NOTICE, user);
         });
         IntStream.range(0, 10).forEach(number -> {
             generateBoard("홍보 " + number, "홍보 입니다.",
-                    BoardType.PROMOTION, "김주혁");
+                    BoardType.PROMOTION, user);
         });
 
         //when
@@ -234,8 +245,9 @@ class BoardControllerTest extends BaseControllerTest {
     @Test
     public void readBoard() throws Exception {
         //given
+        User user = generateUser();
         Board board = generateBoard("자유", "자유입니다.",
-                BoardType.FREE, "김주혁");
+                BoardType.FREE, user);
 
         //when
         mockMvc.perform(get("/api/boards/" + board.getId()))
@@ -245,22 +257,31 @@ class BoardControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("boardTitle").value(board.getBoardTitle()))
                 .andExpect(jsonPath("boardContent").value(board.getBoardContent()))
                 .andExpect(jsonPath("viewCount").value(board.getViewCount() + 1))
-                .andExpect(jsonPath("author").value(board.getAuthor()))
                 .andExpect(jsonPath("boardType").value(board.getBoardType().name()))
         ;
     }
 
     private Board generateBoard(String boardTitle, String boardContent,
-                                BoardType boardType, String author) {
+                                BoardType boardType, User user) {
         Board board = Board.builder()
                 .boardTitle(boardTitle)
                 .boardContent(boardContent)
-                .author(author)
+                .user(user)
                 .boardType(boardType)
                 .viewCount(0)
                 .build();
 
         return this.boardRepository.save(board);
+    }
+
+    private User generateUser(){
+        User user = User.builder()
+                .name("김주혁")
+                .email("vfrvfr4207@gmail.com")
+                .userType(UserType.USER)
+                .build();
+
+        return this.userRepository.save(user);
     }
 
 }

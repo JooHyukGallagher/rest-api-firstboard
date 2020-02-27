@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.weekbelt.restapifirstboard.domain.board.Board;
 import me.weekbelt.restapifirstboard.domain.board.BoardType;
+import me.weekbelt.restapifirstboard.domain.user.User;
 
 import javax.validation.constraints.NotBlank;
 
@@ -20,16 +21,14 @@ public class BoardSaveRequestDto {
     @NotBlank(message = "내용을 입력하세요.")
     private String boardContent;
     @NotBlank
-    private String author;
-    @NotBlank
     private String boardType;
 
-    public Board toBoardEntity(){
+    public Board toBoardEntity(User user){
         return Board.builder()
                 .boardTitle(this.boardTitle)
                 .boardContent(this.boardContent)
-                .author(this.author)
                 .boardType(BoardType.valueOf(this.boardType))
+                .user(user)
                 .viewCount(0)
                 .build();
     }

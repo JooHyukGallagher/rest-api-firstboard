@@ -16,7 +16,7 @@ public class BoardReadResponseDto {
     private Long id;
     private String boardTitle;
     private String boardContent;
-    private String author;
+    private String name;
     private Integer viewCount;
     private BoardType boardType;
 

@@ -2,6 +2,7 @@ package me.weekbelt.restapifirstboard.web;
 
 import lombok.RequiredArgsConstructor;
 import me.weekbelt.restapifirstboard.common.ErrorResource;
+import me.weekbelt.restapifirstboard.config.auth.dto.SessionUser;
 import me.weekbelt.restapifirstboard.service.BoardService;
 import me.weekbelt.restapifirstboard.web.dto.board.*;
 import org.springframework.data.domain.Page;
@@ -29,12 +30,13 @@ public class BoardController {
 
     @PostMapping
     public ResponseEntity<?> saveBoard(@RequestBody @Valid BoardSaveRequestDto boardSaveRequestDto,
-                                       BindingResult bindingResult) {
+                                       BindingResult bindingResult,
+                                       @SessionAttribute SessionUser sessionUser) {
         if (bindingResult.hasErrors()) {
             return badRequest(bindingResult);
         }
 
-        BoardSaveResponseDto boardSaveResponseDto = boardService.saveBoard(boardSaveRequestDto);
+        BoardSaveResponseDto boardSaveResponseDto = boardService.saveBoard(sessionUser, boardSaveRequestDto);
         WebMvcLinkBuilder selfLinkBuilder = linkTo(BoardController.class).slash(boardSaveResponseDto.getId());
         URI createUri = selfLinkBuilder.toUri();
 

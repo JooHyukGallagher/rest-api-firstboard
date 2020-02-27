@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import me.weekbelt.restapifirstboard.domain.BaseTimeEntity;
+import me.weekbelt.restapifirstboard.domain.user.User;
 import me.weekbelt.restapifirstboard.web.dto.board.*;
 
 import javax.persistence.*;
@@ -21,7 +22,9 @@ public class Board extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String boardContent;
 
-    private String author;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private Integer viewCount;
 
@@ -29,11 +32,11 @@ public class Board extends BaseTimeEntity {
     private BoardType boardType;
 
     @Builder
-    public Board(String boardTitle, String boardContent, String author,
+    public Board(String boardTitle, String boardContent, User user,
                  Integer viewCount, BoardType boardType){
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
-        this.author = author;
+        this.user = user;
         this.viewCount = viewCount;
         this.boardType = boardType;
     }

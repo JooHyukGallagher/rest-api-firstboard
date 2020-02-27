@@ -14,6 +14,6 @@ public class BoardSaveResponseDto {
     private Long id;
     private String boardTitle;
     private String boardContent;
-    private String author;
+    private String name;
     private BoardType boardType;
 }

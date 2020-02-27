@@ -1,9 +1,12 @@
 package me.weekbelt.restapifirstboard.service;
 
 import lombok.RequiredArgsConstructor;
+import me.weekbelt.restapifirstboard.config.auth.dto.SessionUser;
 import me.weekbelt.restapifirstboard.domain.board.Board;
 import me.weekbelt.restapifirstboard.domain.board.BoardFactoryObject;
 import me.weekbelt.restapifirstboard.domain.board.BoardRepository;
+import me.weekbelt.restapifirstboard.domain.user.User;
+import me.weekbelt.restapifirstboard.domain.user.UserRepository;
 import me.weekbelt.restapifirstboard.web.dto.board.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,17 +14,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @RequiredArgsConstructor
 @Service
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public BoardSaveResponseDto saveBoard(BoardSaveRequestDto boardSaveRequestDto) {
-        Board savedBoard = boardRepository.save(boardSaveRequestDto.toBoardEntity());
+    public BoardSaveResponseDto saveBoard(SessionUser sessionUser,
+                                          BoardSaveRequestDto boardSaveRequestDto) {
+        User user = userRepository.findByEmail(sessionUser.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 회원정보가 없습니다. email=" + sessionUser.getEmail()));
 
+        Board board = boardSaveRequestDto.toBoardEntity(user);
+        Board savedBoard = boardRepository.save(board);
         return BoardFactoryObject.toBoardSaveResponseDto(savedBoard);
     }
 
