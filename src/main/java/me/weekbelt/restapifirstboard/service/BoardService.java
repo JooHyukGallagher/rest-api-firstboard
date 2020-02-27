@@ -5,6 +5,7 @@ import me.weekbelt.restapifirstboard.config.auth.dto.SessionUser;
 import me.weekbelt.restapifirstboard.domain.board.Board;
 import me.weekbelt.restapifirstboard.domain.board.BoardFactoryObject;
 import me.weekbelt.restapifirstboard.domain.board.BoardRepository;
+import me.weekbelt.restapifirstboard.domain.board.BoardType;
 import me.weekbelt.restapifirstboard.domain.user.User;
 import me.weekbelt.restapifirstboard.domain.user.UserRepository;
 import me.weekbelt.restapifirstboard.web.dto.board.*;
@@ -57,11 +58,22 @@ public class BoardService {
         return BoardFactoryObject.toBoardReadResponseDto(findBoard);
     }
 
-    public Page<BoardReadResponseDto> findBoardList(Pageable pageable) {
+    public Page<BoardReadResponseDto> findBoardList(Pageable pageable, String boardType) {
         pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.
                 getPageNumber() - 1, pageable.getPageSize());
 
-        return boardRepository.findAll(pageable).map(BoardFactoryObject::toBoardReadResponseDto);
+        Page<Board> boardList = getBoardList(pageable, boardType);
 
+        return boardList.map(BoardFactoryObject::toBoardReadResponseDto);
+    }
+
+    private Page<Board> getBoardList(Pageable pageable, String boardType) {
+        Page<Board> boardList;
+        if (boardType.equals("ALL")) {
+            boardList = boardRepository.findAll(pageable);
+        } else {
+            boardList = boardRepository.findAllByBoardType(pageable, BoardType.valueOf(boardType));
+        }
+        return boardList;
     }
 }

@@ -3,6 +3,7 @@ package me.weekbelt.restapifirstboard.web;
 import lombok.RequiredArgsConstructor;
 import me.weekbelt.restapifirstboard.common.ErrorResource;
 import me.weekbelt.restapifirstboard.config.auth.dto.SessionUser;
+import me.weekbelt.restapifirstboard.domain.board.BoardType;
 import me.weekbelt.restapifirstboard.service.BoardService;
 import me.weekbelt.restapifirstboard.web.dto.board.*;
 import org.springframework.data.domain.Page;
@@ -68,8 +69,9 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<?> getBoards(@PageableDefault Pageable pageable,
+                                       @RequestParam(defaultValue = "ALL") String boardType,
                                        PagedResourcesAssembler<BoardReadResponseDto> assembler) {
-        Page<BoardReadResponseDto> page = boardService.findBoardList(pageable);
+        Page<BoardReadResponseDto> page = boardService.findBoardList(pageable, boardType);
         PagedModel<BoardReadResource> boardReadResources = assembler.toModel(page, b -> new BoardReadResource(b));
         return ResponseEntity.ok(boardReadResources);
     }

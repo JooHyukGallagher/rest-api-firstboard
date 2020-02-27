@@ -1,0 +1,94 @@
+<!--헤더-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous"/>
+    <title>커뮤니티 게시판</title>
+</head>
+<body>
+
+<!--네비게이션 바-->
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a href="/" class="navbar-brand">Home</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a href="/" class="nav-link">Home<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="/board/list" class="nav-link">게시판</a>
+            </li>
+        </ul>
+
+        <ul class="nav" th:if="${userName}">
+            <li class="col-md-6">
+                <span id="user" th:text="'Logged in as :' + ${userName}"></span>
+            </li>
+            <li>
+                <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+            </li>
+        </ul>
+        <ul class="nav" th:unless="${userName}">
+            <li class="col-md-6">
+                <a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a>
+            </li>
+            <li class="col-md-6">
+                <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver Login</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+    <!-- 게시글등록 폼 -->
+    <main class="container col-sm-6">
+        <div class="border border-secondary my-4 p-4">
+            <h1 class="text-center my-4">게시글 등록</h1>
+            <form action="" class="px-4 py-3">
+                <div class="form-group">
+                    <label for="boardType">카테고리</label>
+                    <select class="form-control" id="boardType" name="boardType">
+                        <option value="ANNOUNCE">공지</option>
+                        <option value="FREE">자유</option>
+                        <option value="QUESTION">질문</option>
+                        <option value="PROMOTION">홍보</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input type="text" class="form-control is-invalid" id="title" name="title" placeholder="제목">
+                    <div class="invalid-feedback">
+                        2글자 이상 입력해주세요
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="content">내용</label>
+                    <textarea class="form-control is-invalid" id="content" name="content" placeholder="내용"
+                              rows="5"></textarea>
+                    <div class="invalid-feedback">
+                        5글자 이상 입력해주세요
+                    </div>
+                </div>
+                <button type="button" class="btn btn-dark my-2" id="btn-save">등록</button>
+                <button type="button" class="btn btn-secondary my-2" onclick="location.href='/board/list'">취소</button>
+            </form>
+        </div>
+    </main>
+
+    <!--footer-->
+    <script src="/js/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script src="/js/popper.min.js" crossorigin="anonymous"></script>
+    <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js" crossorigin="anonymous"></script>
+
+    <script src="/js/global.js" crossorigin="anonymous"></script>
+    <script src="/js/board/board.js" crossorigin="anonymous"></script>
+    <script src="/js/board/boardWriteForm.js" crossorigin="anonymous"></script>
+</body>
+</html>

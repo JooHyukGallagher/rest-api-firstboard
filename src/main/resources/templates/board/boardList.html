@@ -1,0 +1,150 @@
+<!--헤더-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" crossorigin="anonymous"/>
+    <title>커뮤니티 게시판</title>
+</head>
+<body>
+
+<!--네비게이션 바-->
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a href="/" class="navbar-brand">Home</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a href="/" class="nav-link">Home<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a href="/board/list" class="nav-link">게시판</a>
+            </li>
+        </ul>
+
+        <ul class="nav" th:if="${userName}">
+            <li class="col-md-6">
+                <span id="user" th:text="'Logged in as :' + ${userName}"></span>
+            </li>
+            <li>
+                <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+            </li>
+        </ul>
+        <ul class="nav" th:unless="${userName}">
+            <li class="col-md-6">
+                <a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a>
+            </li>
+            <li class="col-md-6">
+                <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver Login</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- 게시판 -->
+<main class="container">
+    <!-- 카테고리 -->
+    <ul class="nav nav-tabs my-4" id="category">
+        <li class="nav-item">
+            <a class="nav-link active" href="#" id="ALL">전체</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="ANNOUNCE">공지</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="FREE">자유</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="QUESTION">질문</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="PROMOTION">홍보</a>
+        </li>
+    </ul>
+    <!-- 게시글 -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">제목</th>
+            <th scope="col">카테고리</th>
+            <th scope="col">글쓴이</th>
+            <th scope="col">조회수</th>
+            <th scope="col">작성일</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        <!--  게시글 목록  -->
+        </tbody>
+    </table>
+
+    <!--페이징-->
+    <nav aria-label="..." class="my-4">
+        <ul class="pagination justify-content-center">
+            <!-- 페이지버튼 리스트 -->
+        </ul>
+    </nav>
+
+    <button type="button" onclick="location.href='/board/save'"
+            class="btn btn-secondary float-right my-2 mx-3"
+            id="btn-write">글쓰기
+    </button>
+</main>
+
+<!--footer-->
+<script src="/js/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+<script src="/js/popper.min.js" crossorigin="anonymous"></script>
+<script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js" crossorigin="anonymous"></script>
+
+<script src="/js/global.js" crossorigin="anonymous"></script>
+<script src="/js/board/board.js" crossorigin="anonymous"></script>
+<script src="/js/board/boardList.js" crossorigin="anonymous"></script>
+</body>
+</html>
+
+<script id="boardListTemplate" type="x-tmpl-mustache">
+            <tr>
+                <th scope="row"><a href="/board/read/{{id}}">{{title}}
+                </a><span class="badge badge-dark m-1">{{replyCount}}</span></th>
+                <td>{{boardType}}</td>
+                <td>{{nickname}}</td>
+                <td>{{viewCount}}</td>
+                <td>{{createDate}}</td>
+            </tr>
+</script>
+
+<script id="pageFirstButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item">
+        <a class="page-link" href="#" aria-label="First">처음</a>
+    </li>
+</script>
+
+<script id="pagePrevButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item disabled">
+        <a class="page-link" href="#" aria-label="Previous" id="prev">&laquo;</a>
+    </li>
+</script>
+
+<script id="pageButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item" id={{currentPage}}>
+        <a class="page-link" href="#">{{currentPage}}</a>
+    </li>
+</script>
+
+<script id="pageNextButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item">
+        <a class="page-link" href="#" aria-label="Next" id="next">&raquo;</a>
+    </li>
+</script>
+
+<script id="pageLastButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item">
+        <a class="page-link" href="#" aria-label="Last">마지막</a>
+    </li>
+</script>
+

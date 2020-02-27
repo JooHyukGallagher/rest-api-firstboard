@@ -210,17 +210,24 @@ class BoardControllerTest extends BaseControllerTest {
     }
 
     @DisplayName("게시글 리스트 조회")
-    @Test
-    public void queryBoards() throws Exception {
+    @ParameterizedTest(name = "{index} {displayName}")
+    @CsvSource({
+            "ALL", "NOTICE", "FREE", "QUESTION", "PROMOTION"
+    })
+    public void queryBoards(String boardType) throws Exception {
         //given
         User user = generateUser();
         IntStream.range(0, 10).forEach(number -> {
-            generateBoard("자유 " + number, "자유 입니다.",
+            generateBoard("공지 " + number, "공지 입니다.",
+                    BoardType.NOTICE, user);
+        });
+        IntStream.range(0, 10).forEach(number -> {
+            generateBoard("자유" + number, "자유 입니다.",
                     BoardType.FREE, user);
         });
         IntStream.range(0, 10).forEach(number -> {
-            generateBoard("공지 " + number, "공지 입니다.",
-                    BoardType.NOTICE, user);
+            generateBoard("질문" + number, "질문 입니다.",
+                    BoardType.QUESTION, user);
         });
         IntStream.range(0, 10).forEach(number -> {
             generateBoard("홍보 " + number, "홍보 입니다.",
@@ -231,7 +238,8 @@ class BoardControllerTest extends BaseControllerTest {
         this.mockMvc.perform(get("/api/boards")
                 .param("page", "1")
                 .param("size", "10")
-                .param("sort", "id,DESC"))
+                .param("sort", "id,DESC")
+                .param("boardType", boardType))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("page").exists())
