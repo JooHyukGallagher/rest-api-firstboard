@@ -234,7 +234,7 @@ class BoardControllerTest extends BaseControllerTest {
                     BoardType.PROMOTION, user);
         });
 
-        //when
+        //when & then
         this.mockMvc.perform(get("/api/boards")
                 .param("page", "1")
                 .param("size", "10")
@@ -246,7 +246,6 @@ class BoardControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("_embedded.boardReadResponseDtoList[0]._links.self").exists())
                 .andExpect(jsonPath("_links.self").exists())
         ;
-        //then
     }
 
     @DisplayName("boardId에 따른 게시글 조회")

@@ -59,8 +59,8 @@ public class BoardService {
     }
 
     public Page<BoardReadResponseDto> findBoardList(Pageable pageable, String boardType) {
-        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.
-                getPageNumber() - 1, pageable.getPageSize());
+//        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.
+//                getPageNumber() - 1, pageable.getPageSize());
 
         Page<Board> boardList = getBoardList(pageable, boardType);
 

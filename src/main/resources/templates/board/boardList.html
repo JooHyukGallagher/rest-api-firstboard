@@ -10,41 +10,7 @@
 <body>
 
 <!--네비게이션 바-->
-<nav class="navbar navbar-expand-md navbar-light bg-light">
-    <a href="/" class="navbar-brand">Home</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a href="/" class="nav-link">Home<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a href="/board/list" class="nav-link">게시판</a>
-            </li>
-        </ul>
-
-        <ul class="nav" th:if="${userName}">
-            <li class="col-md-6">
-                <span id="user" th:text="'Logged in as :' + ${userName}"></span>
-            </li>
-            <li>
-                <a href="/logout" class="btn btn-info active" role="button">Logout</a>
-            </li>
-        </ul>
-        <ul class="nav" th:unless="${userName}">
-            <li class="col-md-6">
-                <a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a>
-            </li>
-            <li class="col-md-6">
-                <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver Login</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<div th:replace="layout/header::header"></div>
 
 <!-- 게시판 -->
 <main class="container">
@@ -54,7 +20,7 @@
             <a class="nav-link active" href="#" id="ALL">전체</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#" id="ANNOUNCE">공지</a>
+            <a class="nav-link" href="#" id="NOTICE">공지</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#" id="FREE">자유</a>
@@ -96,13 +62,15 @@
 </main>
 
 <!--footer-->
+<div th:replace="layout/footer::footer"></div>
+
 <script src="/js/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
 <script src="/js/popper.min.js" crossorigin="anonymous"></script>
 <script src="/js/bootstrap.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js" crossorigin="anonymous"></script>
 
 <script src="/js/global.js" crossorigin="anonymous"></script>
-<script src="/js/board/board.js" crossorigin="anonymous"></script>
+<!--<script src="/js/board/board.js" crossorigin="anonymous"></script>-->
 <script src="/js/board/boardList.js" crossorigin="anonymous"></script>
 </body>
 </html>
@@ -116,35 +84,47 @@
                 <td>{{viewCount}}</td>
                 <td>{{createDate}}</td>
             </tr>
+
+
 </script>
 
 <script id="pageFirstButtonTemplate" type="x-tmpl-mustache">
     <li class="page-item">
         <a class="page-link" href="#" aria-label="First">처음</a>
     </li>
+
+
 </script>
 
 <script id="pagePrevButtonTemplate" type="x-tmpl-mustache">
     <li class="page-item disabled">
         <a class="page-link" href="#" aria-label="Previous" id="prev">&laquo;</a>
     </li>
+
+
 </script>
 
 <script id="pageButtonTemplate" type="x-tmpl-mustache">
     <li class="page-item" id={{currentPage}}>
         <a class="page-link" href="#">{{currentPage}}</a>
     </li>
+
+
 </script>
 
 <script id="pageNextButtonTemplate" type="x-tmpl-mustache">
     <li class="page-item">
         <a class="page-link" href="#" aria-label="Next" id="next">&raquo;</a>
     </li>
+
+
 </script>
 
 <script id="pageLastButtonTemplate" type="x-tmpl-mustache">
     <li class="page-item">
         <a class="page-link" href="#" aria-label="Last">마지막</a>
     </li>
+
+
 </script>
 

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <div th:fragment="header">
+        <!--네비게이션 바-->
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
+            <a href="/" class="navbar-brand">Home</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a href="/" class="nav-link">Home
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/board/list" class="nav-link">게시판</a>
+                    </li>
+                </ul>
+
+                <ul class="nav" th:if="${userName}">
+                    <li class="col-md-6">
+                        <span id="user" th:text="'Logged in as :' + ${userName}"></span>
+                    </li>
+                    <li>
+                        <a href="/logout" class="btn btn-info active" role="button">Logout</a>
+                    </li>
+                </ul>
+                <ul class="nav" th:unless="${userName}">
+                    <li class="col-md-6">
+                        <a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google
+                            Login
+                        </a>
+                    </li>
+                    <li class="col-md-6">
+                        <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver
+                            Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</html>
