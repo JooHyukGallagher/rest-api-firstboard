@@ -264,7 +264,7 @@ class BoardControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("boardTitle").value(board.getBoardTitle()))
                 .andExpect(jsonPath("boardContent").value(board.getBoardContent()))
                 .andExpect(jsonPath("viewCount").value(board.getViewCount() + 1))
-                .andExpect(jsonPath("boardType").value(board.getBoardType().name()))
+                .andExpect(jsonPath("boardType").value(board.getBoardType().getValue()))
         ;
     }
 

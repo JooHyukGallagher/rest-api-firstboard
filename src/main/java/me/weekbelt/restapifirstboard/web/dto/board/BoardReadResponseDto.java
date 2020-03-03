@@ -18,7 +18,7 @@ public class BoardReadResponseDto {
     private String boardContent;
     private String name;
     private Integer viewCount;
-    private BoardType boardType;
+    private String boardType;
 
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;

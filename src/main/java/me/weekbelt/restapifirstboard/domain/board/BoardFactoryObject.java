@@ -31,7 +31,7 @@ public class BoardFactoryObject {
                 .boardContent(board.getBoardContent())
                 .name(board.getUser().getName())
                 .viewCount(board.getViewCount())
-                .boardType(board.getBoardType())
+                .boardType(board.getBoardType().getValue())
                 .createDate(board.getCreateDate())
                 .modifyDate(board.getModifyDate())
                 .build();

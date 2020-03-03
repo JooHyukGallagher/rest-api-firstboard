@@ -41,6 +41,7 @@
             <th scope="col">글쓴이</th>
             <th scope="col">조회수</th>
             <th scope="col">작성일</th>
+            <th scope="col">수정일</th>
         </tr>
         </thead>
         <tbody id="tbody">
@@ -48,11 +49,15 @@
         </tbody>
     </table>
 
-    <!--페이징-->
-    <nav aria-label="..." class="my-4">
-        <ul class="pagination justify-content-center">
-            <!-- 페이지버튼 리스트 -->
-        </ul>
+<!--    &lt;!&ndash;페이징&ndash;&gt;-->
+<!--    <nav aria-label="..." class="my-4">-->
+<!--        <ul class="pagination justify-content-center">-->
+<!--            &lt;!&ndash; 페이지버튼 리스트 &ndash;&gt;-->
+<!--        </ul>-->
+<!--    </nav>-->
+
+    <nav aria-label="Page navigation" style="text-align: center;">
+
     </nav>
 
     <button type="button" onclick="location.href='/board/save'"
@@ -77,15 +82,14 @@
 
 <script id="boardListTemplate" type="x-tmpl-mustache">
             <tr>
-                <th scope="row"><a href="/board/read/{{id}}">{{title}}
+                <th scope="row"><a href="/board/read/{{id}}">{{boardTitle}}
                 </a><span class="badge badge-dark m-1">{{replyCount}}</span></th>
                 <td>{{boardType}}</td>
-                <td>{{nickname}}</td>
+                <td>{{name}}</td>
                 <td>{{viewCount}}</td>
                 <td>{{createDate}}</td>
+                <td>{{modifyDate}}</td>
             </tr>
-
-
 </script>
 
 <script id="pageFirstButtonTemplate" type="x-tmpl-mustache">
