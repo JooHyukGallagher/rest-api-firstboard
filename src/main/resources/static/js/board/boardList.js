@@ -3,15 +3,20 @@ const boardCategory = {
     prevButton: document.querySelector("#ALL"),
     currentButton: "",
     init: function () {
-        boardCategory.initCategoryButton();
-    },
-    initCategoryButton: function () {
         const categoryList = document.querySelector("#category");
-        categoryList.addEventListener("click", (evt) => {
-            boardCategory.changeBoardTypeButton(evt.target);
-            boardCategory.changeBoardType(evt.target);
-            boardList.requestBoardList(evt.target);
-        });
+        categoryList.addEventListener("click", boardCategory.initCategoryButton);
+    },
+    initCategoryButton: async function (evt) {
+        let clickedButton = evt.target;
+        if (clickedButton.classList.contains("nav-link")) {
+            boardCategory.changeBoardTypeButton(clickedButton);
+            boardCategory.changeBoardType(clickedButton);
+
+            let requestUrl = "/api/boards?boardType=" + clickedButton.id;
+            const boardReadResource = await getData(requestUrl);
+            boardList.createBoardList(boardReadResource._embedded.boardReadResponseDtoList);
+            // TODO: 카테고리에 따른 페이징 버튼 초기화 로직 추가
+        }
     },
     changeBoardTypeButton: function (clickedCategoryButton) {
         boardCategory.prevButton.classList.remove("active");
@@ -25,16 +30,8 @@ const boardCategory = {
 };
 
 const boardList = {
-    init: function (boardPageData) {
-        boardList.createBoardList(boardPageData._embedded.boardReadResponseDtoList);
-    },
-    requestBoardList: async function(clickedCategoryButton){
-        if (clickedCategoryButton.classList.contains("nav-link")){
-            const boardPageData = await getData("/api/boards?boardType=" + clickedCategoryButton.id);
-            console.log(boardPageData);
-            // boardPage.init(boardPageData);
-            boardList.createBoardList(boardPageData._embedded.boardReadResponseDtoList);
-        }
+    init: function (boardReadResource) {
+        boardList.createBoardList(boardReadResource._embedded.boardReadResponseDtoList);
     },
     createBoardList(boardListResponseList) {
         // 기존 리스트 삭제
@@ -42,12 +39,12 @@ const boardList = {
         boardListContainer.innerHTML = "";
 
         boardListResponseList.forEach(boardListResponse => {
-           const data = boardList.createBindingData(boardListResponse);
-           const boardListTemplate = document.querySelector("#boardListTemplate").innerHTML;
+            const data = boardList.createBindingData(boardListResponse);
+            const boardListTemplate = document.querySelector("#boardListTemplate").innerHTML;
 
-           const bindTemplate = Handlebars.compile(boardListTemplate);
-           const result = bindTemplate(data);
-           boardListContainer.innerHTML += result;
+            const bindTemplate = Handlebars.compile(boardListTemplate);
+            const result = bindTemplate(data);
+            boardListContainer.innerHTML += result;
         });
     },
     createBindingData: function (board) {
@@ -64,9 +61,34 @@ const boardList = {
     }
 };
 
+const boardPage = {
+    init: function (boardPageData) {
+        const pageInfo = boardPageData.page;
+        const links = boardPageData._links;
+        const boardReadResponseDtoList = boardPageData._embedded.boardReadResponseDtoList
+
+        console.log(boardReadResponseDtoList);
+        console.log(pageInfo);
+        console.log(links);
+        boardPage.createPageButtonList(links, pageInfo);
+    },
+    createPageButtonList(links, pageInfo) {
+        let paginationContainer = document.querySelector(".pagination");
+
+        if (pageInfo.number === 0) {
+            document.querySelector("#prevPageButton").classList.add("disabled");
+        } else if (pageInfo.number === pageInfo.totalPages - 1) {
+            document.querySelector("#nextPageButton").classList.add("disabled");
+        }
+    },
+    makePageButtonTemplate: function (links, pageInfo) {
+
+    }
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
-    const boardPageData = await getData("/api/boards");
-    console.log(boardPageData);
+    const boardReadResource = await getData("/api/boards");
     boardCategory.init();
-    boardList.init(boardPageData);
+    boardList.init(boardReadResource);
+    boardPage.init(boardReadResource);
 });
