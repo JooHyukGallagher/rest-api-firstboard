@@ -72,6 +72,7 @@ public class BoardController {
                                        @RequestParam(defaultValue = "ALL") String boardType,
                                        PagedResourcesAssembler<BoardReadResponseDto> assembler) {
         Page<BoardReadResponseDto> page = boardService.findBoardList(pageable, boardType);
+        // Link를 추가하기 위해 Page타입을 PagedModel타입으로 변환
         PagedModel<BoardReadResource> boardReadResources = assembler.toModel(page, b -> new BoardReadResource(b));
         return ResponseEntity.ok(boardReadResources);
     }
@@ -80,3 +81,4 @@ public class BoardController {
         return ResponseEntity.badRequest().body(new ErrorResource(bindingResult));
     }
 }
+

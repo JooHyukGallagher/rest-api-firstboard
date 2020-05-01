@@ -12,3 +12,4 @@ public class BoardReadResource extends EntityModel<BoardReadResponseDto> {
         add(linkTo(BoardController.class).slash(board.getId()).withSelfRel());
     }
 }
+

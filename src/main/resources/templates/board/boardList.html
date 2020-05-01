@@ -36,6 +36,7 @@
     <table class="table">
         <thead>
         <tr>
+<!--            <th scope="col">순서</th>-->
             <th scope="col">제목</th>
             <th scope="col">카테고리</th>
             <th scope="col">글쓴이</th>
@@ -45,26 +46,14 @@
         </tr>
         </thead>
         <tbody id="tbody">
-        <!--  게시글 목록  -->
+            <!--게시글 리스트-->
         </tbody>
     </table>
 
     <!--페이징-->
-    <nav aria-label="..." class="my-4">
-        <ul class="pagination justify-content-center">
-            <!-- 페이지버튼 리스트 -->
-            <li class="page-item" id="firstPageButton">
-                <a class="page-link" href="#" aria-label="First">처음</a>
-            </li>
-            <li class="page-item disabled" id="prevPageButton">
-                <a class="page-link" href="#" aria-label="Previous" id="prev">&laquo;</a>
-            </li>
-            <li class="page-item" id="nextPageButton">
-                <a class="page-link" href="#" aria-label="Next" id="next">&raquo;</a>
-            </li>
-            <li class="page-item" id="lastPageButton">
-                <a class="page-link" href="#" aria-label="Last">마지막</a>
-            </li>
+    <nav aria-label="Page navigation" style="text-align:center;">
+        <ul class="pagination justify-content-center my-5">
+            <!--페이지버튼-->
         </ul>
     </nav>
 
@@ -102,20 +91,32 @@
 
 
 <script id="pageButtonTemplate" type="x-tmpl-mustache">
-    <li class="page-item" id={{currentPage}}>
+    <li class="page-item" id={{realPage}}>
         <a class="page-link" href="#">{{currentPage}}</a>
     </li>
 </script>
 
-<!--<script id="pagePrevButtonTemplate" type="x-tmpl-mustache">-->
-<!--    <li class="page-item disabled">-->
-<!--        <a class="page-link" href="#" aria-label="Previous" id="prev">&laquo;</a>-->
-<!--    </li>-->
-<!--</script>-->
+<script id="prevPageButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item disabled">
+        <a class="page-link" href="#" aria-label="Previous" id="prev">&laquo;</a>
+    </li>
+</script>
 
 
-<!--<script id="pageNextButtonTemplate" type="x-tmpl-mustache">-->
-<!--    <li class="page-item">-->
-<!--        <a class="page-link" href="#" aria-label="Next" id="next">&raquo;</a>-->
-<!--    </li>-->
-<!--</script>-->
+<script id="nextPageButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item">
+        <a class="page-link" href="#" aria-label="Next" id="next">&raquo;</a>
+    </li>
+</script>
+
+<script id="firstPageButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item" id="first-page">
+        <a class="page-link" href="#">처음</a>
+    </li>
+</script>
+
+<script id="lastPageButtonTemplate" type="x-tmpl-mustache">
+    <li class="page-item" id="last-page">
+        <a class="page-link" href="#">마지막</a>
+    </li>
+</script>
